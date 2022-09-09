@@ -1,0 +1,36 @@
+.a15 {
+    z-index: 9;
+}
+
+.drag-and-drop {
+    cursor: move;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    z-index: 1000;
+}
+
+.drag {
+    z-index: 1001;
+}
+
+body {
+    background-image: url("1559cff14be716cebec509595e04dc64.jpg");
+    background-size: cover;
+    padding: 0;
+    display: flex;
+    margin: 0;
+}
+
+.de {
+    display: block;
+    width: 200px;
+    background: transparent;
+    border: 2px solid #FFF;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #FFF;
+    font-size: 120%;
+    font-weight: bold;
+}
