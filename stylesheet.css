@@ -2,14 +2,6 @@
     z-index: 9;
 }
 
-.drag-and-drop {
-    cursor: move;
-    width: 100px;
-    height: 100px;
-    position: absolute;
-    z-index: 1000;
-}
-
 .drag {
     z-index: 1001;
 }
@@ -20,17 +12,5 @@ body {
     padding: 0;
     display: flex;
     margin: 0;
-}
-
-.de {
-    display: block;
-    width: 200px;
-    background: transparent;
-    border: 2px solid #FFF;
-    padding: 20px;
-    text-align: center;
-    text-decoration: none;
-    color: #FFF;
-    font-size: 120%;
-    font-weight: bold;
+    overflow: hidden;
 }
