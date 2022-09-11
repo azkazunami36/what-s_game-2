@@ -32,13 +32,18 @@ window.onload = function () {
             bo1.src = "miku.gif";
         };
         bo1.style.width = "100%";
-        bo1.onclick = sound;
         bo0.appendChild(bo1);
         bodyid.appendChild(bo0);
         bo0.addEventListener("mousedown", mdown, false);
         bo0.addEventListener("touchstart", mdown, false);
         fors++;
     }, 50);
+    addEventListener("mousemove", mmove, false);
+    addEventListener("touchmove", mmove, false);
+    addEventListener("mouseup", mup, false);
+    addEventListener("mouseleave", mup, false);
+    addEventListener("touchend", mup, false);
+    addEventListener("touchleave", mup, false);
     document.getElementById("intro").addEventListener("ended", () => { sound(); });
 };
 
@@ -56,12 +61,10 @@ function mdown(e) {
     };
     x = event.pageX - this.offsetLeft;
     y = event.pageY - this.offsetTop;
-    document.body.addEventListener("mousemove", mmove, false);
-    document.body.addEventListener("touchmove", mmove, false);
 };
 function mmove(e) {
-    document.addEventListener('touchmove', function (event) { event.preventDefault(); }, { passive: false });
     var drag = document.getElementsByClassName("drag")[0];
+    if (drag == undefined) return;
     if (e.type === "mousemove") {
         var event = e;
     } else {
@@ -70,16 +73,7 @@ function mmove(e) {
     e.preventDefault();
     drag.style.top = event.pageY - y + "px";
     drag.style.left = event.pageX - x + "px";
-    drag.addEventListener("mouseup", mup, false);
-    document.body.addEventListener("mouseleave", mup, false);
-    drag.addEventListener("touchend", mup, false);
-    document.body.addEventListener("touchleave", mup, false);
 };
 function mup(e) {
-    var drag = document.getElementsByClassName("drag")[0];
-    document.body.removeEventListener("mousemove", mmove, false);
-    drag.removeEventListener("mouseup", mup, false);
-    document.body.removeEventListener("touchmove", mmove, false);
-    drag.removeEventListener("touchend", mup, false);
-    drag.classList.remove("drag");
+    var drag = document.getElementsByClassName("drag")[0]; drag.classList.remove("drag");
 };
