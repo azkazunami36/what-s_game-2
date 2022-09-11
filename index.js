@@ -63,6 +63,7 @@ function mdown(e) {
     y = event.pageY - this.offsetTop;
 };
 function mmove(e) {
+    document.addEventListener('touchmove', event => { event.preventDefault(); }, { passive: false });
     var drag = document.getElementsByClassName("drag")[0];
     if (drag == undefined) return;
     if (e.type === "mousemove") {
