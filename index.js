@@ -54,11 +54,7 @@ function mdown(e) {
     bo0.autoplay = true;
     bo0.loop = true;
     this.classList.add("drag");
-    if (e.type === "mousedown") {
-        var event = e;
-    } else {
-        var event = e.changedTouches[0];
-    };
+    if (e.type === "mousedown") { var event = e } else { var event = e.changedTouches[0]; };
     x = event.pageX - this.offsetLeft;
     y = event.pageY - this.offsetTop;
 };
@@ -66,11 +62,7 @@ function mmove(e) {
     document.addEventListener('touchmove', event => { event.preventDefault(); }, { passive: false });
     var drag = document.getElementsByClassName("drag")[0];
     if (drag == undefined) return;
-    if (e.type === "mousemove") {
-        var event = e;
-    } else {
-        var event = e.changedTouches[0];
-    };
+    if (e.type === "mousemove") { var event = e; } else { var event = e.changedTouches[0]; };
     e.preventDefault();
     drag.style.top = event.pageY - y + "px";
     drag.style.left = event.pageX - x + "px";
