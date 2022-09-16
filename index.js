@@ -1,72 +1,84 @@
-function sound() { document.getElementById('memz').play(); }; //再生
+var image = [280, 10, 10], playaudio = "nyancata.mp3", x, y; //imageは画像の出現率、playaudioは再生する音声、x、yは画像とマウスのずれ
 
-var //数が多いほどランダム性が上がると思います
-image1 = 280, //確率、img.png
-image2 = 10, //確率、nyancat.gif
-image3 = 10, //確率、miku.gif
-playaudio = "nyancata.mp3"; //再生する音声ファイル
-var x, y; //ドラッグ時に使用すると思われる変数
+var windowoverflow = (x1, y1, ww, wh, iw, ih) => { //ブラウザより外に行かないようにする関数
+    var x2 = x1, y2 = y1; //まずはそのまま
+    if (y1 > (wh - ih)) { y2 = wh - ih; }; //座標が画面枠より下なら
+    if (y1 < 0) { y2 = 0; }; //座標が画面枠より上なら
+    if (x1 > (ww - iw)) { x2 = ww - iw; }; //座標が画面枠より右なら
+    if (x1 < 0) { x2 = 0; }; //座標が画面枠より左なら
+    return [x2, y2]; //結果を出力
+};
 
 window.onload = function () {
-    document.getElementById("memz").src = playaudio;
-    var bodyid = document.getElementById("bodyi");
-    let fors = 0;
+    var bodyid = document.body; //body取得
+    let fors = 0; //interval用(forと同じ仕組みにするため)
     interval = setInterval(() => {
-        if (fors > 500) clearInterval(interval);
+        if (fors > 5) clearInterval(interval);
         var bo0 = document.createElement("div");
         var bo1 = document.createElement("img");
         var sW = Math.floor(Math.random() * (document.documentElement.clientWidth - 90));
         var sH = Math.floor(Math.random() * (document.documentElement.clientHeight - 90));
+        bo0.classList = "window";
         bo0.style.top = sH + "px";
         bo0.style.left = sW + "px";
-        bo0.style.cursor = "move";
-        bo0.style.width = "7%";
-        bo0.style.position = "absolute";
-        bo0.style.zIndex = "1000";
-        var types = Math.floor(Math.random() * (image1 + image2 + image3));
-        if (types < image1) {
+        var types = Math.floor(Math.random() * (image[0] + image[1] + image[2]));
+        if (types < image[0]) {
             bo1.src = "img.png";
-        } else if (types < (image2 + image1)) {
+        } else if (types < (image[1] + image[0])) {
             bo1.src = "cat.gif";
-        } else if (types < (image3 + image2 + image1)) {
+        } else if (types < (image[2] + image[1] + image[0])) {
             bo1.src = "miku.gif";
         };
         bo1.style.width = "100%";
         bo0.appendChild(bo1);
         bodyid.appendChild(bo0);
-        bo0.addEventListener("mousedown", mdown, false);
-        bo0.addEventListener("touchstart", mdown, false);
+        bo0.addEventListener("mousedown", dragstart, false);
+        bo0.addEventListener("touchstart", dragstart, false);
         fors++;
     }, 50);
-    addEventListener("mousemove", mmove, false);
-    addEventListener("touchmove", mmove, false);
-    addEventListener("mouseup", mup, false);
-    addEventListener("mouseleave", mup, false);
-    addEventListener("touchend", mup, false);
-    addEventListener("touchleave", mup, false);
-    document.getElementById("intro").addEventListener("ended", () => { sound(); });
+    addEventListener("mousemove", dragmove, false);
+    addEventListener("touchmove", dragmove, false);
+    addEventListener("mouseup", dragend, false);
+    addEventListener("touchend", dragend, false);
 };
-
-function mdown(e) {
-    var bo0 = document.createElement("audio");
-    bo0.src = playaudio;
-    bo0.style.display = "none";
-    bo0.autoplay = true;
-    bo0.loop = true;
-    this.classList.add("drag");
-    if (e.type === "mousedown") { var event = e } else { var event = e.changedTouches[0]; };
-    x = event.pageX - this.offsetLeft;
-    y = event.pageY - this.offsetTop;
-};
-function mmove(e) {
-    document.addEventListener('touchmove', event => { event.preventDefault(); }, { passive: false });
-    var drag = document.getElementsByClassName("drag")[0];
-    if (drag == undefined) return;
-    if (e.type === "mousemove") { var event = e; } else { var event = e.changedTouches[0]; };
+const dragstart = e => { //クリック時などに使う関数
+    plays();
+    console.log("クラス追加");
+    console.log(e.target)
     e.preventDefault();
-    drag.style.top = event.pageY - y + "px";
-    drag.style.left = event.pageX - x + "px";
+    e.target.classList.add("drag"); //クラス追加
+    if (e.type == "mousedown") { var ev = e; } else { var ev = e.changedTouches[0]; }; //スマホ用座標かを確認し、置き換え
+    //mousedownかtouchstartかを判断し、evの内容を変える(スマホ操作の場合changedTouche[0]に座標が入るため、置き換えが必須)
+    x = ev.clientX - e.target.getBoundingClientRect().left; //要素とマウスとのズレを記録、横
+    y = ev.clientY - e.target.getBoundingClientRect().top; //要素とマウスとのズレを記録、縦
 };
-function mup(e) {
-    var drag = document.getElementsByClassName("drag")[0]; drag.classList.remove("drag");
+const dragmove = e => { //ドラッグ時やすワイプ時に使う関数
+    var dragitem = document.getElementsByClassName("drag")[0]; //オブジェクト取得
+    if (dragitem == undefined) return; //オブジェクトがなければ終了
+    e.preventDefault(); //通常起こる動作を抑制
+    if (e.type == "mousemove") { var ev = e; } else { var ev = e.changedTouches[0]; }; //スマホ用座標かを確認し、置き換え
+    //mousemoveかtouchmoveかを判断し、evの内容を変える(スマホ操作の場合changedTouche[0]に座標が入るため、置き換えが必須)
+    var outxy = windowoverflow( //座標の管理、画面外を抑制
+        ev.clientX - x, //ズレを反映
+        ev.clientY - y, //ズレを反映
+        document.documentElement.clientWidth, //画面サイズ取得、横
+        document.documentElement.clientHeight, //画面サイズ取得、縦
+        dragitem.naturalWidth, //要素の大きさを取得、横幅
+        dragitem.naturalHeight //要素の大きさを取得、縦幅
+    );
+    dragitem.style.left = outxy[0] + "px"; //スタイルを指定
+    dragitem.style.top = outxy[1] + "px"; //スタイルを指定
+    console.log(dragitem.style.left + ":" + dragitem.style.top)
+};
+const dragend = e => { //クリックが外されたときなどに使う関数
+    console.log("クラス削除");
+    var dragends = document.getElementsByClassName("drag")[0]; //オブジェクト取得
+    if (dragends != undefined) dragends.classList.remove("drag"); //クラス除去
+};
+const plays = () => {
+    var audios = document.createElement("audio");
+    audios.src = playaudio;
+    audios.style.display = "none";
+    audios.autoplay = true;
+    audios.loop = true;
 };
